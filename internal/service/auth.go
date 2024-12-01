@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -66,13 +67,15 @@ func (a *AuthService) GenerateTokens(guid, ip string) (string, string, error) {
 		return "", "", err
 	}
 
+	encoded := base64.StdEncoding.EncodeToString([]byte(refreshToken))
+
 	logrus.Info("check")
 
 	if _, err := a.repo.SaveRefreshToken(user.Guid, hash); err != nil {
 		return "", "", err
 	}
 
-	return accessToken, refreshToken, err
+	return accessToken, encoded, err
 }
 
 func (a *AuthService) newJWT(guid, ip, pair_key string, expTime time.Duration) (string, error) {
@@ -116,6 +119,9 @@ func (a *AuthService) parseToken(acessToken string) (string, string, string, err
 
 func (s *AuthService) Refresh(accessToken, refreshToken, ip string) (string, string, error) {
 	guid, lastIp, pair_key1, err := s.parseToken(accessToken)
+	if err != nil {
+		return "", "", err
+	}
 
 	user, err := s.repo.GetUser(guid)
 	if err != nil {
@@ -134,8 +140,10 @@ func (s *AuthService) Refresh(accessToken, refreshToken, ip string) (string, str
 	exists := false
 	var tokenId int
 
+	decoded, _ := base64.StdEncoding.DecodeString(refreshToken)
+
 	for _, token := range tokens {
-		if checkEqHash(token.TokenHash, refreshToken) {
+		if checkEqHash(token.TokenHash, string(decoded)) {
 			exists = true
 			tokenId = token.Id
 			break
@@ -146,7 +154,7 @@ func (s *AuthService) Refresh(accessToken, refreshToken, ip string) (string, str
 		return "", "", errors.New("unknown refresh token")
 	}
 
-	_, _, pair_key2, err := s.parseToken(refreshToken)
+	_, _, pair_key2, err := s.parseToken(string(decoded))
 	if err != nil {
 		return "", "", err
 	}
