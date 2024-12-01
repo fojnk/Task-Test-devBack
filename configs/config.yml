@@ -6,3 +6,7 @@ db:
   port: "5432"
   user: "postgres"
   sslmode: "disable"
+
+smtp:
+  server: smtp.mailersend.net
+  port: 587
