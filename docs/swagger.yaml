@@ -1,5 +1,21 @@
 basePath: /
 definitions:
+  transport.InputRegister:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  transport.TokenPair:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   transport.transort_error:
     properties:
       message:
@@ -11,10 +27,21 @@ info:
   title: AuthService
   version: "1.0"
 paths:
-  /auth/getTokens/:
+  /auth/getTokens:
     get:
       description: Generate tokens
       operationId: generate-tokens
+      parameters:
+      - description: Guid
+        in: query
+        name: guid
+        required: true
+        type: string
+      - description: Ip
+        in: header
+        name: Ip
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -41,10 +68,24 @@ paths:
       summary: Generate tokens
       tags:
       - Auth
-  /auth/refresh/:
+  /auth/refresh:
     post:
+      consumes:
+      - application/json
       description: Refresh
       operationId: refresh
+      parameters:
+      - description: Ip
+        in: header
+        name: Ip
+        required: true
+        type: string
+      - description: tokens
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/transport.TokenPair'
       produces:
       - application/json
       responses:
@@ -71,10 +112,24 @@ paths:
       summary: Refresh
       tags:
       - Auth
-  /auth/register/:
+  /auth/register:
     post:
-      description: Register
-      operationId: register
+      consumes:
+      - application/json
+      description: create account
+      operationId: create-account
+      parameters:
+      - description: Ip
+        in: header
+        name: Ip
+        required: true
+        type: string
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/transport.InputRegister'
       produces:
       - application/json
       responses:

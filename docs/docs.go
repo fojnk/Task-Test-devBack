@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/getTokens/": {
+        "/auth/getTokens": {
             "get": {
                 "description": "Generate tokens",
                 "produces": [
@@ -26,6 +26,22 @@ const docTemplate = `{
                 ],
                 "summary": "Generate tokens",
                 "operationId": "generate-tokens",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guid",
+                        "name": "guid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ip",
+                        "name": "Ip",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -60,9 +76,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/refresh/": {
+        "/auth/refresh": {
             "post": {
                 "description": "Refresh",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -71,6 +90,24 @@ const docTemplate = `{
                 ],
                 "summary": "Refresh",
                 "operationId": "refresh",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ip",
+                        "name": "Ip",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "tokens",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transport.TokenPair"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -105,9 +142,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/register/": {
+        "/auth/register": {
             "post": {
-                "description": "Register",
+                "description": "create account",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -115,7 +155,25 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "Register",
-                "operationId": "register",
+                "operationId": "create-account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ip",
+                        "name": "Ip",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "account info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transport.InputRegister"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -152,6 +210,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "transport.InputRegister": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "transport.TokenPair": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
         "transport.transort_error": {
             "type": "object",
             "properties": {
