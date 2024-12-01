@@ -15,6 +15,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @title           AuthService
+// @version         1.0
+// @host      localhost:8000
+// @BasePath  /
+// @securitydefinitions.apikey  ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 

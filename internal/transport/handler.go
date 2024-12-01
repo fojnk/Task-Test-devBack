@@ -1,6 +1,8 @@
 package transport
 
 import (
+	_ "github.com/fojnk/Task-Test-devBack/docs"
+
 	"github.com/fojnk/Task-Test-devBack/internal/service"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

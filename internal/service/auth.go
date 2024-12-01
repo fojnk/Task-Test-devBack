@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fojnk/Task-Test-devBack/internal/models"
 	"github.com/fojnk/Task-Test-devBack/internal/repository"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/exp/rand"
 )
 
@@ -24,7 +26,7 @@ type AuthService struct {
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	Guid string `json:"guid"`
+	Guid string
 	Ip   string
 }
 
@@ -93,14 +95,24 @@ func (s *AuthService) generatePasswordHash(password string) string {
 }
 
 func (s *AuthService) NewRefreshToken() (string, error) {
-	b := make([]byte, 32)
+	tokenBytes := make([]byte, 32)
 
 	randVal := rand.NewSource(uint64(time.Now().Unix()))
 	r := rand.New(randVal)
 
-	if _, err := r.Read(b); err != nil {
+	if _, err := r.Read(tokenBytes); err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", b), nil
+	return base64.StdEncoding.EncodeToString(tokenBytes), nil
+}
+
+func HashRefreshToken(refreshToken string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(refreshToken), bcrypt.DefaultCost)
+	return string(hash), err
+}
+
+func CheckRefreshTokenHash(storedHash, refreshToken string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(refreshToken))
+	return err == nil
 }

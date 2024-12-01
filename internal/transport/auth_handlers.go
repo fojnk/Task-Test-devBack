@@ -41,21 +41,21 @@ func (h *Handler) getTokens(c *gin.Context) {
 // @Failure 400,404 {object} transort_error
 // @Failure 500 {object} transort_error
 // @Failure default {object} transort_error
-// @Router /auth/getTokens/ [get]
+// @Router /auth/refresh/ [post]
 func (h *Handler) refresh(c *gin.Context) {
 
 }
 
-// @Summary Refresh
+// @Summary Register
 // @Tags Auth
-// @Description Refresh
-// @ID refresh
+// @Description Register
+// @ID register
 // @Produce  json
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} transort_error
 // @Failure 500 {object} transort_error
 // @Failure default {object} transort_error
-// @Router /auth/getTokens/ [get]
+// @Router /auth/register/ [post]
 func (h *Handler) register(c *gin.Context) {
 
 }
