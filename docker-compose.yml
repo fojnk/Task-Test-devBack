@@ -29,6 +29,8 @@ services:
     networks:
         new:
     container_name: backend
+    environment:
+      - POSTGRES_PASSWORD=qwerty
     ports:
       - 8000:8000
     depends_on:
